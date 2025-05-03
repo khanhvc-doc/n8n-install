@@ -1,0 +1,41 @@
+services:
+  svr_n8n:
+    image: n8nio/n8n
+    container_name: cont_n8n
+    restart: always
+    environment:
+      - N8N_SECURE_COOKIE=false
+      # Cấu hình múi giờ chung
+      - GENERIC_TIMEZONE=${MY_GENERIC_TIMEZONE}
+      # Tên miền cấp cao nhất để phục vụ dịch vụ
+      - DOMAIN_NAME=${MY_DOMAIN_NAME}
+      # Tên miền phụ để phục vụ dịch vụ
+      - SUBDOMAIN=${MY_SUBDOMAIN}
+      # DOMAIN_NAME và SUBDOMAIN kết hợp lại sẽ xác định địa chỉ truy cập của n8n
+      - N8N_HOST=${EXTERNAL_IP}
+      - N8N_EDITOR_BASE_URL=${EXTERNAL_IP}
+      - WEBHOOK_URL=${EXTERNAL_IP}
+      # Cấu hình chế độ lưu trữ dữ liệu nhị phân mặc định của n8n
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      # Bật chế độ kiểm soát quyền truy cập tệp cấu hình
+      - N8N_PROTECT_CONFIG=true
+      - N8N_MCP_ENABLED=true
+      - N8N_MCP_MODE=server
+      # Kích hoạt tính năng dọn dẹp dữ liệu thực thi
+      - N8N_EXECUTIONS_DATA_PRUNE=true
+      # Giới hạn thời gian lưu trữ dữ liệu thực thi (tính theo giờ) ~ 14 ngày
+      - N8N_EXECUTIONS_DATA_MAX_AGE=336
+      # Giới hạn số lượng bản ghi dữ liệu thực thi được lưu trữ
+      - N8N_EXECUTIONS_DATA_SAVE_ON_SUCCESS=true
+      - N8N_EXECUTIONS_DATA_SAVE_ON_ERROR=true
+      - N8N_EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=true
+      - N8N_EXECUTIONS_DATA_MAX_COUNT=1000
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_GENERAL_TRUST_PROXY=true
+    ports:
+      - "${MY_PORT}:5678"
+    volumes:
+      - ${CURR_DIR}/vol_n8n:/home/node/.n8n
+    dns:
+      - 192.168.99.11

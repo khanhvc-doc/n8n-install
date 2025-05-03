@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+    svr_vllm:
+    image: my_vllm_image
+    container_name: cont_vllm
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    command: >
+      python3 -m vllm.entrypoints.openai.api_server
+      --model Qwen/Qwen1.5-7B-Chat
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+

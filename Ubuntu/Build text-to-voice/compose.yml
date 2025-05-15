@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  svr_n8n:
+    image: n8nio/n8n
+    container_name: cont_n8n
+    restart: always
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - GENERIC_TIMEZONE=Asia/Ho_Chi_Minh
+      - N8N_EDITOR_BASE_URL=${EXTERNAL_IP}
+      - WEBHOOK_URL=${EXTERNAL_IP}
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      - N8N_MCP_ENABLED=true
+      - N8N_MCP_MODE=server
+      - N8N_HOST=${EXTERNAL_IP}
+      - WEBHOOK_URL=${EXTERNAL_IP}
+      - N8N_RUNNERS_ENABLED=true
+    ports:
+      - "80:5678"
+    volumes:
+      - ${CURR_DIR}/vol_n8n:/home/node/.n8n
+
+  svr_tts:
+    build:
+      context: ./tts_api
+    container_name: cont_tts
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./tts_api/audio_files:/app/audio_files
+    restart: always
